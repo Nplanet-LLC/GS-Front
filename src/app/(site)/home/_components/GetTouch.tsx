@@ -18,7 +18,7 @@ interface FormData {
   phoneNumber: string;
   email: string;
   inquiry: string;
-  countryId: number | string;
+  country: string;
 }
 
 function GetTouch() {
@@ -33,13 +33,13 @@ function GetTouch() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>();
 
-  const [selectedCountry, setSelectedCountry] = useState<number>(0);
+  // const [selectedCountry, setSelectedCountry] = useState<string>(0);
 
-  const handleCountryChange = (value: string | number) => {
-    const countryId = typeof value === "string" ? parseInt(value) : value;
-    setSelectedCountry(countryId);
-    setValue("countryId", countryId);
-  };
+  // const handleCountryChange = (value: string) => {
+  //   const country = typeof value === "string" ? parseInt(value) : value;
+  //   setSelectedCountry(country);
+  //   setValue("country", country);
+  // };
 
   useEffect(() => {
     AOS.init({
@@ -66,8 +66,8 @@ function GetTouch() {
 
       toast.success("Message sent successfully!");
       reset(); // Reset form after successful submission
-      setSelectedCountry(0);
-      setValue("countryId", "");
+     // setSelectedCountry(0);
+      setValue("country", "");
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
