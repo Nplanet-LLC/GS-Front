@@ -209,9 +209,16 @@ function Footer() {
           <span>Return and Cancel Policy</span>
         </Link>
       </div>
-      <p className=" w-full text-center text-[#0A3161] mt-10 text-[14px]">
-        Copyright © 2025 Glocal Solutions . All rights reserved
-      </p>
+<p className=" w-full text-center text-[#0A3161] mt-10 text-[14px]">
+  Copyright © 2025 Glocal Solutions . All rights reserved
+</p>
+<p className="w-full text-center text-[#0A3161] mt-1 text-xs">
+  Powered by{" "}
+  <Link href="https://nplanet.net/" target="_blank" className="underline hover:text-blue-700">
+    Nplanet
+  </Link>
+</p>
+
     </footer>
   );
 }

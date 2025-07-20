@@ -6,11 +6,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Trash2 } from "lucide-react";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 interface Country {
   id: number;
   countryName: string;
 }
+
+const url = process.env.NEXT_PUBLIC_BASE_URL;
 
 const CountryPage = () => {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -19,10 +22,8 @@ const CountryPage = () => {
 
   const fetchCountries = async () => {
     try {
-      const response = await fetch(
-        "https://glocalapiv2.runasp.net/api/Country/get-all"
-      );
-      const data = await response.json();
+      const response = await axios.get(`${url}Country/get-all`);
+      const data = response.data;
       setCountries(data);
     } catch (error) {
       toast.error("Failed to fetch countries");
@@ -42,16 +43,13 @@ const CountryPage = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        "https://glocalapiv2.runasp.net/api/Country/add-country",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ countryName: newCountry }),
-        }
-      );
+      const response = await fetch(`${url}Country/add-country`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ countryName: newCountry }),
+      });
 
       if (response.ok) {
         toast.success("Country added successfully");
@@ -81,12 +79,9 @@ const CountryPage = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(
-          `https://glocalapiv2.runasp.net/api/Country/delete-country/${id}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(`${url}Country/delete-country/${id}`, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           Swal.fire("Deleted!", "Country has been deleted.", "success");

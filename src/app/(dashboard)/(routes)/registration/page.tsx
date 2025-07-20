@@ -24,7 +24,7 @@ type Service = {
 };
 
 export default function ServicesTable() {
-  const url = "https://glocalapiv2.runasp.net/api/";
+const url = process.env.NEXT_PUBLIC_BASE_URL;
   const [data, setData] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable, { TableStyles } from "react-data-table-component";
 import axios from "axios";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Pagination } from "../../../components/Pagination";
@@ -22,7 +22,7 @@ type Webinar = {
 };
 
 export default function WebinarTable() {
-  const url = "https://glocalapiv2.runasp.net/api/";
+  const url = process.env.NEXT_PUBLIC_BASE_URL;
   const [data, setData] = useState<Webinar[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -88,13 +88,9 @@ export default function WebinarTable() {
         htmlContainer: "w-full",
       },
       preConfirm: () => {
-        const title = (document.getElementById("title") as HTMLInputElement)
-          .value;
-        const description = (
-          document.getElementById("description") as HTMLTextAreaElement
-        ).value;
-        const price = (document.getElementById("price") as HTMLInputElement)
-          .value;
+        const title = (document.getElementById("title") as HTMLInputElement).value;
+        const description = (document.getElementById("description") as HTMLTextAreaElement).value;
+        const price = (document.getElementById("price") as HTMLInputElement).value;
 
         if (!title || !description || !price) {
           Swal.showValidationMessage("Please fill all fields");
@@ -164,7 +160,7 @@ export default function WebinarTable() {
     },
     {
       name: "Price",
-      selector: (row: Webinar) => `${row.priceCountry} `,
+      selector: (row: Webinar) => `${row.priceCountry}`,
       sortable: true,
       center: true,
     },
@@ -179,6 +175,7 @@ export default function WebinarTable() {
           >
             <Pencil className="w-4 h-4" />
           </button>
+          {/* Uncomment below if delete is required */}
           {/* <button
             onClick={() => handleDelete(row.id)}
             className="p-2 cursor-pointer text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors"

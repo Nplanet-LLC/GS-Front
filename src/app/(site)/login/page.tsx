@@ -115,12 +115,12 @@ function LoginPage() {
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
-          <Link
+          {/* <Link
             href="/forgot_password"
             className="text-sm text-[#0A3161] mt-2 hover:text-[#3f5269] w-fit"
           >
             Forgot Password?
-          </Link>
+          </Link> */}
         </div>
 
         {/* Submit Button */}
@@ -137,12 +137,12 @@ function LoginPage() {
         </button>
       </form>
 
-      <Link
+      {/* <Link
         href="/sing_up"
         className="text-[#0A3161] cursor-pointer transition-all duration-300 transform hover:text-[#3f5269]"
       >
         Don’t have an account? Sign up
-      </Link>
+      </Link> */}
     </div>
   );
 }

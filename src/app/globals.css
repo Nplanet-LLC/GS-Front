@@ -42,10 +42,11 @@ body {
   }
 
   .services {
-    background-image: url("/assets/services.jpg");
-    background-size: cover;
-    background-position: center;
-  }
+  background-image: url("/assets/services.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
   .success {
     background-image: url("/assets/Success\ Stories.jpg");
