@@ -351,7 +351,7 @@ export default function RegistrationBookingPage() {
               <input
                 id="cardNumber"
                 type="text"
-                placeholder="4111111111111111"
+                placeholder="0000 0000 0000 0000"
                 maxLength={30}
                 {...register("cardNumber")}
                 className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${

@@ -115,12 +115,12 @@ function LoginPage() {
           {errors.password && (
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
-          {/* <Link
+          {/* { <Link
             href="/forgot_password"
             className="text-sm text-[#0A3161] mt-2 hover:text-[#3f5269] w-fit"
           >
             Forgot Password?
-          </Link> */}
+          </Link> } */}
         </div>
 
         {/* Submit Button */}

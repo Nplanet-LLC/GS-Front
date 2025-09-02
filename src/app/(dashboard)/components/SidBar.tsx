@@ -96,18 +96,22 @@ function SidBar() {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
-  async function deleteToken() {
-    try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-      });
-      if (res.ok) {
-        window.location.href = "/login";
-      }
-    } catch (error) {
-      console.error("Failed to logout", error);
-    }
+async function deleteToken() {
+  try {
+    // لو عندك API لتسجيل الخروج
+    const res = await fetch("/api/logout", {
+      method: "POST",
+    });
+
+    // بعد مسح التوكن أو تسجيل الخروج، ارجع للهوم
+    window.location.href = "/home";
+  } catch (error) {
+    console.error("Failed to logout", error);
+    // حتى لو فشل، ممكن ترجّع المستخدم للهوم
+    window.location.href = "/home";
   }
+}
+
 
   return (
     <div className="w-64 min-h-screen h-full bg-gray-100 p-6 shadow-md">
@@ -190,7 +194,19 @@ function SidBar() {
             </li>
           );
         })}
+
+<li className="mt-8">
+  <Link
+    href="/forgot_password"
+    className="flex items-center space-x-2 text-[#0A3161] hover:text-blue-600 font-semibold"
+  >
+    <DoorOpen size={18} />
+    <span>Change Password</span>
+  </Link>
+</li>
+
       </ul>
+      
 
       <div
         onClick={deleteToken}

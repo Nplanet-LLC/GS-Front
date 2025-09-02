@@ -199,14 +199,14 @@ function WebinarSubscription() {
               </p>
 
               <div className="flex gap-4 justify-center mt-4 md:flex-row flex-col">
-                {/* <Link
+                { <Link
                   className="md:w-[200px] w-full"
                   href={`/webinar_booking/${webinars?.id}`}
                 >
                   <button className="w-full h-[50px] md:w-[200px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#0A3161] border border-transparent">
                     Pay Now
                   </button>
-                </Link> */}
+                </Link> }
                 <Link href="/contact_us" className="md:w-[200px] w-full">
                   <button className="w-full h-[50px] md:w-[200px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
                     Contact Us
@@ -260,14 +260,14 @@ function WebinarSubscription() {
               </p>
 
               <div className="flex gap-4 justify-center mt-4 md:flex-row flex-col items-center">
-                {/* <Link
+                { <Link
                   className="md:w-[200px] w-full"
                   href={`/registration_booking/${services?.id}`}
                 >
                   <button className="w-full md:w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#0A3161] border border-transparent">
                     Pay Now
                   </button>
-                </Link> */}
+                </Link> }
                 <Link className="md:w-[200px] w-full" href="/contact_us">
                   <button className="w-full md:w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
                     Contact Us
@@ -297,11 +297,11 @@ function WebinarSubscription() {
                 (Per Country)
               </p>
               <div className="flex gap-4 justify-center mt-7">
-                {/* <Link href={`/newsletter_booking/${news?.id}`}>
+                { <Link href={`/newsletter_booking/${news?.id}`}>
                   <button className="w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#0A3161] border border-transparent">
                     Pay Now
                   </button>
-                </Link> */}
+                </Link> }
                 <Link className="md:w-[200px] w-full" href="/contact_us">
                   <button className="w-full md:w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
                     Contact Us
