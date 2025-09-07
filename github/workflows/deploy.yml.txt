@@ -1,0 +1,28 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main   # الفرع اللي عايز تـ deploy منه
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: 5.182.18.237
+          username: root
+          port: 2222
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/client
+            git pull origin main
+            npm install --production
+            npm run build
+            pm2 restart client || pm2 start npm --name "client" -- run start
