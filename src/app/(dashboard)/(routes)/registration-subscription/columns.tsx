@@ -10,7 +10,7 @@ export interface WebinarBooking {
   payStatus: string;
   transactionId: string | null;
   paymentDate: string;
-  nameWebinar: string;
+  nameService: string;
   description: string;
   priceIndividual: number;
 }
@@ -42,8 +42,8 @@ export const columns = [
     selector: (row: WebinarBooking) => row.country || "N/A",
   },
   {
-    name: "Webinar",
-    selector: (row: WebinarBooking) => row.nameWebinar,
+    name: "Service",
+    selector: (row: WebinarBooking) => row.nameService,
     sortable: true,
   },
   {

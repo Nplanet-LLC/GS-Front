@@ -74,7 +74,7 @@ const WebinarSubscriptionPage = () => {
       setData(paginatedData);
       setTotalPages(Math.ceil(allData.length / itemsPerPage));
     } catch (error) {
-      console.error("Error fetching webinar bookings:", error);
+      console.error("Error fetching Services bookings:", error);
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ const WebinarSubscriptionPage = () => {
       item.email.toLowerCase().includes(filterText.toLowerCase()) ||
       item.firstName.toLowerCase().includes(filterText.toLowerCase()) ||
       item.lastName.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.nameWebinar.toLowerCase().includes(filterText.toLowerCase())
+      item.nameService.toLowerCase().includes(filterText.toLowerCase())
   );
 
   return (
@@ -103,10 +103,10 @@ const WebinarSubscriptionPage = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-6 rounded-lg shadow-sm">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Webinar Subscriptions
+              Services Subscriptions
             </h1>
             <p className="text-sm text-gray-600">
-              View and manage all webinar bookings
+              View and manage all Services bookings
             </p>
           </div>
           <div className="w-full md:w-1/3 relative">

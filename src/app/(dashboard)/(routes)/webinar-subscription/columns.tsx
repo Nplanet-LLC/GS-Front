@@ -5,7 +5,7 @@ export interface WebinarBooking {
   lastName: string;
   email: string;
   phoneNumber: string;
-  country: string;
+  num: number;
   amount: number;
   payStatus: string;
   transactionId: string | null;
@@ -38,8 +38,8 @@ export const columns = [
     selector: (row: WebinarBooking) => row.phoneNumber,
   },
   {
-    name: "Country",
-    selector: (row: WebinarBooking) => row.country || "N/A",
+    name: "Subscriptions",
+    selector: (row: WebinarBooking) => row.num || 0,
   },
   {
     name: "Webinar",

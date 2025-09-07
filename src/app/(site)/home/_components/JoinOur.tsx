@@ -67,14 +67,14 @@ function JoinOur() {
       );
 
       // التحقق من الاستجابة
-      if (response.status === 200 || response.data.statusCode === 200) {
-        toast.success("Subscription successful! Email sent.");
-        reset();
-        setValue("email", "");
-        setEmailValue(""); // إعادة تعيين الـ state المحلي
-      } else {
-        toast.error("Subscription failed. Please try again.");
-      }
+     if (response.status === 200 && response.data?.statusCode === 200) {
+  toast.success("✅ Thank you for subscribing!");
+  reset();
+  setValue("email", "");
+  setEmailValue("");
+} else {
+  toast.error("❌ Subscription failed. Please try again later.");
+}
     } catch (error: any) {
       if (error.code === "ECONNABORTED") {
         toast.error("Request timeout. Please try again.");

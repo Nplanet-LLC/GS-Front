@@ -103,6 +103,61 @@ export default function NewsletterPage() {
     countryFields.map((index) => `countries.${index}` as const)
   );
 
+
+// Auto-format expiration date to MM/YY
+const watchedExpirationDate = watch("expirationDate");
+
+useEffect(() => {
+  if (!watchedExpirationDate) return;
+
+  // Remove all non-digits
+  let val = watchedExpirationDate.replace(/\D/g, "");
+
+  // Auto insert "/" after 2 digits
+  if (val.length >= 2 && !val.includes("/")) {
+    val = val.slice(0, 2) + "/" + val.slice(2);
+  }
+
+  // Limit to 5 characters (MM/YY)
+  if (val.length > 5) {
+    val = val.slice(0, 5);
+  }
+
+  // Update only if value changed (avoid infinite loop)
+  if (val !== watchedExpirationDate) {
+    setValue("expirationDate", val, { shouldValidate: true });
+  }
+}, [watchedExpirationDate, setValue]);
+
+
+
+
+// Auto-format card number with spaces every 4 digits
+const watchedCardNumber = watch("cardNumber");
+
+useEffect(() => {
+  if (!watchedCardNumber) return;
+
+  // Remove all non-digits
+  let val = watchedCardNumber.replace(/\D/g, "");
+
+  // Add space every 4 digits
+  val = val.replace(/(.{4})/g, "$1 ").trim();
+
+  // Limit to 19 characters (16 digits + 3 spaces)
+  if (val.length > 19) {
+    val = val.slice(0, 19);
+  }
+
+  // Only update if changed
+  if (val !== watchedCardNumber) {
+    setValue("cardNumber", val, { shouldValidate: true });
+  }
+}, [watchedCardNumber, setValue]);
+
+
+
+
   useEffect(() => {
     const selectedCount = watchedCountries.filter((c) => c?.id).length;
     setPrice(selectedCount * (newsItem?.priceCountry || 0));
@@ -417,66 +472,92 @@ export default function NewsletterPage() {
 
         {/* Payment Information */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Card Number */}
-          <div>
-            <label
-              htmlFor="cardNumber"
-              className="block font-semibold text-[#0A3161] mb-1"
-            >
-              Card Number
-            </label>
-            <div className="relative">
-              <CreditCard className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
-              <input
-                id="cardNumber"
-                type="text"
-                placeholder="0000 0000 0000 0000"
-                maxLength={30}
-                {...register("cardNumber")}
-                className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.cardNumber
-                    ? "border-red-500 focus:ring-red-400"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
-              />
-            </div>
-            {errors.cardNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.cardNumber.message}
-              </p>
-            )}
-          </div>
+        {/* Card Number */}
+<div>
+  <label
+    htmlFor="cardNumber"
+    className="block font-semibold text-[#0A3161] mb-1"
+  >
+    Card Number
+  </label>
+  <div className="relative">
+    <CreditCard className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+    <input
+      id="cardNumber"
+      type="text"
+      placeholder="4242 4242 4242 4242"
+      maxLength={19}
+      onKeyDown={(e) => {
+        // Allow only numbers, backspace, delete, arrows, tab
+        if (
+          !/[0-9]/.test(e.key) &&
+          e.key !== "Backspace" &&
+          e.key !== "Delete" &&
+          e.key !== "ArrowLeft" &&
+          e.key !== "ArrowRight" &&
+          e.key !== "Tab"
+        ) {
+          e.preventDefault();
+        }
+      }}
+      {...register("cardNumber")}
+      className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
+        errors.cardNumber
+          ? "border-red-500 focus:ring-red-400"
+          : "border-gray-300 focus:ring-blue-500"
+      }`}
+    />
+  </div>
+  {errors.cardNumber && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.cardNumber.message}
+    </p>
+  )}
+</div>
 
-          {/* Expiration Date */}
-          <div>
-            <label
-              htmlFor="expirationDate"
-              className="block font-semibold text-[#0A3161] mb-1"
-            >
-              Expiration Date (MM/YY)
-            </label>
-            <div className="relative">
-              <Calendar className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
-              <input
-                id="expirationDate"
-                type="text"
-                placeholder="12/25"
-                maxLength={5}
-                {...register("expirationDate")}
-                className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.expirationDate
-                    ? "border-red-500 focus:ring-red-400"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
-              />
-            </div>
-            {errors.expirationDate && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.expirationDate.message}
-              </p>
-            )}
-          </div>
-
+      {/* Expiration Date */}
+              <div>
+                <label
+                  htmlFor="expirationDate"
+                  className="block font-semibold text-[#0A3161] mb-1"
+                >
+                  Expiration Date (MM/YY)
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+                 <input
+      id="expirationDate"
+      type="text"
+      placeholder="MM/YY"
+      maxLength={5}
+      onKeyDown={(e) => {
+        // Allow only numbers, backspace, delete, arrow keys, and /
+        if (
+          !/[0-9]/.test(e.key) &&
+          e.key !== "Backspace" &&
+          e.key !== "Delete" &&
+          e.key !== "ArrowLeft" &&
+          e.key !== "ArrowRight" &&
+          e.key !== "Tab" &&
+          e.key !== "/"
+        ) {
+          e.preventDefault();
+        }
+      }}
+      {...register("expirationDate")}
+      className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
+        errors.expirationDate
+          ? "border-red-500 focus:ring-red-400"
+          : "border-gray-300 focus:ring-blue-500"
+      }`}
+    />
+                </div>
+                {errors.expirationDate && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.expirationDate.message}
+                  </p>
+                )}
+              </div>
           {/* CVC */}
           <div className="md:col-span-2">
             <label

@@ -9,7 +9,6 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import {
   User,
-  Building2,
   Mail,
   Phone,
   CreditCard,
@@ -22,11 +21,6 @@ import { AxiosError } from "axios";
 
 interface ErrorResponse {
   message: string;
-}
-
-interface Country {
-  id: number;
-  countryName: string;
 }
 
 interface NewsItem {
@@ -44,22 +38,9 @@ const FormSchema = z.object({
     .string()
     .min(8, "Phone number is too short")
     .regex(/^\d+$/, "Phone must contain only numbers"),
-  countries: z
-    .array(
-      z.object({
-        id: z.string().min(1, "Country is required"),
-        name: z.string().optional(),
-      })
-    )
-    .min(1, "Please select at least one country"),
-  cardNumber: z
-    .string()
-    .min(16, "Invalid card number")
-    .max(30, "Invalid card number"),
-  expirationDate: z
-    .string()
-    .min(5, "Invalid expiration date")
-    .max(5, "Invalid expiration date"),
+  num: z.number().min(1, "You must select at least 1 subscription"),
+  cardNumber: z.string().min(16, "Invalid card number").max(30),
+  expirationDate: z.string().min(5, "Invalid expiration date").max(5),
   cardCode: z.string().min(3, "Invalid CVC").max(4, "Invalid CVC"),
 });
 
@@ -70,19 +51,15 @@ export default function NewsletterPage() {
   const router = useRouter();
   const serviceId = params?.id as string;
   const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
-  const [countries, setCountries] = useState<Country[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [countryFields, setCountryFields] = useState([0]);
   const [price, setPrice] = useState(0);
   const url = process.env.NEXT_PUBLIC_BASE_URL;
 
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
     reset,
-    getValues,
     watch,
     setValue,
   } = useForm<FormValues>({
@@ -92,53 +69,94 @@ export default function NewsletterPage() {
       lastName: "",
       email: "",
       phoneNumber: "",
-      countries: [],
+      num: 1,
       cardNumber: "",
       expirationDate: "",
       cardCode: "",
     },
   });
 
-  const watchedCountries = watch(
-    countryFields.map((index) => `countries.${index}` as const)
-  );
+  const watchedQuantity = watch("num");
+
+// Auto-format expiration date to MM/YY
+const watchedExpirationDate = watch("expirationDate");
+
+useEffect(() => {
+  if (!watchedExpirationDate) return;
+
+  // Remove all non-digits
+  let val = watchedExpirationDate.replace(/\D/g, "");
+
+  // Auto insert "/" after 2 digits
+  if (val.length >= 2 && !val.includes("/")) {
+    val = val.slice(0, 2) + "/" + val.slice(2);
+  }
+
+  // Limit to 5 characters (MM/YY)
+  if (val.length > 5) {
+    val = val.slice(0, 5);
+  }
+
+  // Update only if value changed (avoid infinite loop)
+  if (val !== watchedExpirationDate) {
+    setValue("expirationDate", val, { shouldValidate: true });
+  }
+}, [watchedExpirationDate, setValue]);
+
+
+
+// Auto-format card number with spaces every 4 digits
+const watchedCardNumber = watch("cardNumber");
+
+useEffect(() => {
+  if (!watchedCardNumber) return;
+
+  // Remove all non-digits
+  let val = watchedCardNumber.replace(/\D/g, "");
+
+  // Add space every 4 digits
+  val = val.replace(/(.{4})/g, "$1 ").trim();
+
+  // Limit to 19 characters (16 digits + 3 spaces)
+  if (val.length > 19) {
+    val = val.slice(0, 19);
+  }
+
+  // Only update if changed
+  if (val !== watchedCardNumber) {
+    setValue("cardNumber", val, { shouldValidate: true });
+  }
+}, [watchedCardNumber, setValue]);
+
+
+
 
   useEffect(() => {
-    const selectedCount = watchedCountries.filter((c) => c?.id).length;
-    setPrice(selectedCount * (newsItem?.priceIndividual || 0));
-  }, [watchedCountries, newsItem]);
-
-  const addCountryField = () => {
-    const values = getValues();
-    const lastIndex = countryFields[countryFields.length - 1];
-    const lastCountry = values.countries?.[lastIndex];
-
-    if (lastCountry?.id) {
-      setCountryFields((prev) => [...prev, prev.length]);
-    } else {
-      Swal.fire({
-        icon: "warning",
-        title: "Missing Country",
-        text: "Please select a country before adding another one.",
-        confirmButtonColor: "#0A3161",
-      });
-    }
-  };
+    setPrice((watchedQuantity || 1) * (newsItem?.priceIndividual || 0));
+  }, [watchedQuantity, newsItem]);
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const selectedCountryIds = data.countries
-        .filter((country) => country?.id)
-        .map((country) => Number(country.id));
+      // Validate serviceId
+      const parsedServiceId = Number(serviceId);
+      if (isNaN(parsedServiceId)) {
+        throw new Error("Invalid service ID");
+      }
 
-      if (selectedCountryIds.length === 0) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Please select at least one country",
-          confirmButtonColor: "#0A3161",
-        });
-        return;
+      // Clean card number
+      const cleanCardNumber = data.cardNumber.replace(/\s+/g, "");
+      if (!/^\d{16}$/.test(cleanCardNumber)) {
+        throw new Error("Card number must be exactly 16 digits.");
+      }
+
+      // Validate expiration date
+      if (!/^\d{2}\/\d{2}$/.test(data.expirationDate)) {
+        throw new Error("Expiration date must be in MM/YY format (e.g., 12/25).");
+      }
+
+      // Validate CVC
+      if (!/^\d{3,4}$/.test(data.cardCode)) {
+        throw new Error("CVC must be 3 or 4 digits.");
       }
 
       const bookingData = {
@@ -146,52 +164,50 @@ export default function NewsletterPage() {
         lastName: data.lastName,
         email: data.email,
         phoneNumber: data.phoneNumber,
-        newsLetterId: Number(serviceId),
-        selectedCountryIds,
-        cardNumber: data.cardNumber.replace(/\s+/g, ""),
+        webinarId: parsedServiceId, 
+        num: data.num,             
+        cardNumber: cleanCardNumber,
         expirationDate: data.expirationDate,
         cardCode: data.cardCode,
       };
 
-      await axios.post(`${url}Webinar/create-payment`, bookingData);
+      console.log("Submitting payment with payload:", bookingData);
+
+      const response = await axios.post(`${url}Webinar/create-payment`, bookingData);
 
       await Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Booking submitted successfully!",
-        confirmButtonColor: "#0A3161",
-      });
-
-      reset();
-      router.push("/sucess");
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          axiosError?.response?.data?.message ||
-          "Failed to process payment. Please try again",
-        confirmButtonColor: "#0A3161",
-      });
-    }
-  };
+            icon: "success",
+            title: "Success",
+            text: "Booking submitted successfully!",
+            confirmButtonColor: "#0A3161",
+          });
+    
+          reset();
+          router.push("/sucess");
+        } catch (error) {
+          const axiosError = error as AxiosError<ErrorResponse>;
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text:
+              axiosError?.response?.data?.message ||
+              "Failed to process payment. Please try again",
+            confirmButtonColor: "#0A3161",
+          });
+        }
+      };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [countriesRes, newsRes] = await Promise.all([
-          axios.get(`${url}Country/get-all`),
-          axios.get(`${url}Webinar/get-by-id/${serviceId}`),
-        ]);
-        setCountries(countriesRes.data);
-        setNewsItem(newsRes.data);
+        const response = await axios.get(`${url}Webinar/get-by-id/${serviceId}`);
+        setNewsItem(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching webinar data:", error);
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "Failed to load data. Please try again later.",
+          text: "Failed to load webinar details. Please try again later.",
           confirmButtonColor: "#0A3161",
         });
       } finally {
@@ -201,6 +217,8 @@ export default function NewsletterPage() {
 
     if (serviceId) {
       fetchData();
+    } else {
+      setIsLoading(false);
     }
   }, [serviceId, url]);
 
@@ -221,7 +239,7 @@ export default function NewsletterPage() {
   if (!newsItem) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center">
-        <div className="text-[#0A3161] text-xl">Newsletter item not found</div>
+        <div className="text-[#0A3161] text-xl">Webinar item not found</div>
       </div>
     );
   }
@@ -359,93 +377,77 @@ export default function NewsletterPage() {
               </p>
             )}
           </div>
-        </div>
 
-        {/* Countries Selection */}
-        <div>
-          <label className="block font-semibold text-[#0A3161] mb-3">
-            Select Countries
-          </label>
-          {countryFields.map((index) => (
-            <div key={index} className="mb-4">
-              <select
-                {...register(`countries.${index}.id` as const)}
-                onChange={(e) => {
-                  const selectedCountry = countries.find(
-                    (c) => c.id === Number(e.target.value)
-                  );
-                  if (selectedCountry) {
-                    setValue(`countries.${index}`, {
-                      id: e.target.value,
-                      name: selectedCountry.countryName,
-                    });
-                  }
-                }}
-                className={`w-full text-[#575757] px-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.countries?.[index]
-                    ? "border-red-500 focus:ring-red-400"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
-              >
-                <option value="">Select a country</option>
-                {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.countryName}
-                  </option>
-                ))}
-              </select>
-              {errors.countries?.[index] && (
-                <p className="text-red-500 text-sm mt-1">
-                  Please select a country
-                </p>
-              )}
-            </div>
-          ))}
-          {errors.countries && !errors.countries[0] && (
-            <p className="text-red-500 text-sm mt-1">
-              Please select at least one country
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={addCountryField}
-            className="text-blue-600 underline mt-3 font-semibold cursor-pointer hover:text-blue-800 transition-colors"
-          >
-            Add Country
-          </button>
+          {/* Number of Subscriptions */}
+          <div>
+            <label
+              htmlFor="num"
+              className="block font-semibold text-[#0A3161] mb-1"
+            >
+              Number of Subscriptions
+            </label>
+            <input
+              id="num"
+              type="number"
+              min={1}
+              {...register("num", { valueAsNumber: true })}
+              className={`w-full text-[#575757] px-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
+                errors.num
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-500"
+              }`}
+            />
+            {errors.num && (
+              <p className="text-red-500 text-sm mt-1">{errors.num.message}</p>
+            )}
+          </div>
         </div>
 
         {/* Payment Information */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Card Number */}
-          <div>
-            <label
-              htmlFor="cardNumber"
-              className="block font-semibold text-[#0A3161] mb-1"
-            >
-              Card Number
-            </label>
-            <div className="relative">
-              <CreditCard className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
-              <input
-                id="cardNumber"
-                type="text"
-                placeholder="0000 0000 0000 0000"
-                maxLength={30}
-                {...register("cardNumber")}
-                className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.cardNumber
-                    ? "border-red-500 focus:ring-red-400"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
-              />
-            </div>
-            {errors.cardNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.cardNumber.message}
-              </p>
-            )}
-          </div>
+       {/* Card Number */}
+<div>
+  <label
+    htmlFor="cardNumber"
+    className="block font-semibold text-[#0A3161] mb-1"
+  >
+    Card Number
+  </label>
+  <div className="relative">
+    <CreditCard className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+    <input
+      id="cardNumber"
+      type="text"
+      placeholder="4242 4242 4242 4242"
+      maxLength={19}
+      onKeyDown={(e) => {
+        // Allow only numbers, backspace, delete, arrows, tab
+        if (
+          !/[0-9]/.test(e.key) &&
+          e.key !== "Backspace" &&
+          e.key !== "Delete" &&
+          e.key !== "ArrowLeft" &&
+          e.key !== "ArrowRight" &&
+          e.key !== "Tab"
+        ) {
+          e.preventDefault();
+        }
+      }}
+      {...register("cardNumber")}
+      className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
+        errors.cardNumber
+          ? "border-red-500 focus:ring-red-400"
+          : "border-gray-300 focus:ring-blue-500"
+      }`}
+    />
+  </div>
+  {errors.cardNumber && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.cardNumber.message}
+    </p>
+  )}
+</div>
+
 
           {/* Expiration Date */}
           <div>
@@ -457,18 +459,32 @@ export default function NewsletterPage() {
             </label>
             <div className="relative">
               <Calendar className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
-              <input
-                id="expirationDate"
-                type="text"
-                placeholder="12/25"
-                maxLength={5}
-                {...register("expirationDate")}
-                className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.expirationDate
-                    ? "border-red-500 focus:ring-red-400"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
-              />
+             <input
+  id="expirationDate"
+  type="text"
+  placeholder="MM/YY"
+  maxLength={5}
+  onKeyDown={(e) => {
+    // Allow only numbers, backspace, delete, arrow keys, and /
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== "Backspace" &&
+      e.key !== "Delete" &&
+      e.key !== "ArrowLeft" &&
+      e.key !== "ArrowRight" &&
+      e.key !== "Tab" &&
+      e.key !== "/"
+    ) {
+      e.preventDefault();
+    }
+  }}
+  {...register("expirationDate")}
+  className={`w-full text-[#575757] pl-10 pr-4 py-3 border rounded-md focus:outline-none focus:ring-2 ${
+    errors.expirationDate
+      ? "border-red-500 focus:ring-red-400"
+      : "border-gray-300 focus:ring-blue-500"
+  }`}
+/>
             </div>
             {errors.expirationDate && (
               <p className="text-red-500 text-sm mt-1">
@@ -513,11 +529,11 @@ export default function NewsletterPage() {
           <h2 className="font-semibold text-2xl">Summary</h2>
           <div className="flex justify-between items-center border-b border-gray-400 pb-1">
             <p>{newsItem?.title}</p>
-            <span>${price}</span>
+            <span>${price.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
             <p className="font-bold text-xl">Total</p>
-            <span>${price}</span>
+            <span>${price.toFixed(2)}</span>
           </div>
         </div>
 
