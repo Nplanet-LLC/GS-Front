@@ -412,12 +412,7 @@ useEffect(() => {
         </div> */}
 
 <div>
-  <label
-    htmlFor="country"
-    className="block font-semibold text-[#0A3161] mb-1"
-  >
-    Country
-  </label>
+  
 
   {/* 🚫 مخفي بالكامل - لا يظهر للمستخدم */}
   <select
@@ -438,12 +433,6 @@ useEffect(() => {
     ))}
   </select>
 
-  {/* 👀 توضيح للمستخدم إن الدولة محددة تلقائيًا */}
-  <p className="text-[#575757] text-sm mt-1">
-    Country: <strong>USA</strong> (automatically selected)
-  </p>
-
-  {/* ⚠️ خطأ التحقق (إذا وقع) */}
   {errors.country && (
     <p className="text-red-500 text-sm mt-1">
       {errors.country.message}
