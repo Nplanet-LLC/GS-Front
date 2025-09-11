@@ -37,10 +37,10 @@ export const columns = [
     name: "Phone",
     selector: (row: WebinarBooking) => row.phoneNumber,
   },
-  {
-    name: "Country",
-    selector: (row: WebinarBooking) => row.country || "N/A",
-  },
+  // {
+  //   name: "Country",
+  //   selector: (row: WebinarBooking) => row.country || "N/A",
+  // },
   {
     name: "Service",
     selector: (row: WebinarBooking) => row.nameService,

@@ -360,8 +360,8 @@ useEffect(() => {
             )}
           </div>
         </div>
-{/* 
-        <div>
+
+        {/* <div>
           <label
             htmlFor="country"
             className="block font-semibold text-[#0A3161] mb-1"
@@ -393,6 +393,40 @@ useEffect(() => {
             </p>
           )}
         </div> */}
+
+   <div>
+  <label
+    htmlFor="country"
+    className="block font-semibold text-[#0A3161] mb-1"
+  >
+    Country
+  </label>
+
+  {/* خفي الـ select بالكامل */}
+  <select
+    id="country"
+    {...register("country", { valueAsNumber: false })}
+    className="hidden" // 👈 هذا هو السر: يخفي العنصر تمامًا
+    defaultValue="usa" // 👈 القيمة الافتراضية اللي هتُرسل
+  >
+    <option value="">Select a country</option>
+    {countries.map((country) => (
+      <option
+        key={country.id}
+        value={country.countryName.toLowerCase()}
+      >
+        {country.countryName}
+      </option>
+    ))}
+  </select>
+
+  {errors.country && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.country.message}
+    </p>
+  )}
+</div>
+
 
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10">
        {/* Card Number */}
