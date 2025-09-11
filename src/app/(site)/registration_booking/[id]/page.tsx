@@ -360,7 +360,7 @@ useEffect(() => {
             )}
           </div>
         </div>
-
+{/* 
         <div>
           <label
             htmlFor="country"
@@ -392,7 +392,7 @@ useEffect(() => {
               {errors.country.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10">
        {/* Card Number */}

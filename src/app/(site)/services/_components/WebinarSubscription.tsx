@@ -181,7 +181,7 @@ function WebinarSubscription() {
                   </div>
                 ))}
               </div>
-
+{/* 
               <div className="flex items-center gap-2 my-5">
                 <CalendarDays className="text-[#B31942]" />
                 <span className="text-[#0A3161] font-semibold">
@@ -189,7 +189,7 @@ function WebinarSubscription() {
                     ? new Date(webinars.date).toLocaleDateString("en-GB")
                     : ""}
                 </span>
-              </div>
+              </div> */}
 
               <p className="text-[#0A3161] font-semibold text-lg">
                 <span className="text-[#B31942]">
@@ -198,21 +198,19 @@ function WebinarSubscription() {
                 Per Invitation
               </p>
 
-              <div className="flex gap-4 justify-center mt-4 md:flex-row flex-col">
-                { <Link
-                  className="md:w-[200px] w-full"
-                  href={`/webinar_booking/${webinars?.id}`}
-                >
-                  <button className="w-full h-[50px] md:w-[200px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#0A3161] border border-transparent">
-                    Pay Now
-                  </button>
-                </Link> }
-                <Link href="/contact_us" className="md:w-[200px] w-full">
-                  <button className="w-full h-[50px] md:w-[200px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
-                    Contact Us
-                  </button>
-                </Link>
-              </div>
+             <div className="flex flex-col md:flex-row gap-4 justify-center mt-4">
+  {/* <Link href={`/webinar_booking/${webinars?.id}`} className="w-full max-w-[200px]">
+    <button className="w-full h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#0A3161] border border-transparent">
+      Pay Now
+    </button>
+  </Link> */}
+  <Link href="/contact_us" className="w-full max-w-[200px]">
+    <button className="w-full h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
+      Contact Us
+    </button>
+  </Link>
+</div>
+
             </div>
           </div>
         </div>
