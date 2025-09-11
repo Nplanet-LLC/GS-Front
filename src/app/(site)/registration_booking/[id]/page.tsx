@@ -145,32 +145,49 @@ useEffect(() => {
   
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [countriesRes, serviceRes] = await Promise.all([
-          axios.get(`${url}Country/get-all`),
-          axios.get(`${url}Service/get-by-id/${webinarId}`),
-        ]);
+  const fetchData = async () => {
+    try {
+      const [countriesRes, serviceRes] = await Promise.all([
+        axios.get(`${url}Country/get-all`),
+        axios.get(`${url}Service/get-by-id/${webinarId}`),
+      ]);
 
-        setCountries(countriesRes.data);
-        setService(serviceRes.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to load data. Please try again later.",
-          confirmButtonColor: "#0A3161",
-        });
-      } finally {
-        setIsLoading(false);
+      setCountries(countriesRes.data);
+      setService(serviceRes.data);
+
+      // ✅ بعد تحميل الدول، نبحث عن USA ونضبطها تلقائيًا
+      const usaCountry = countriesRes.data.find(
+        (c: Country) => c.countryName.toLowerCase() === "usa"
+      );
+
+      if (usaCountry) {
+        setValue("country", "usa"); // 👈 تثبيت القيمة مباشرة في الـ form
+      } else {
+        // خيار احتياطي: لو ما لقاش USA، نستخدم أول دولة
+        const firstCountry = countriesRes.data[0];
+        if (firstCountry) {
+          setValue("country", firstCountry.countryName.toLowerCase());
+        }
       }
-    };
-
-    if (webinarId) {
-      fetchData();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load data. Please try again later.",
+        confirmButtonColor: "#0A3161",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [webinarId, url]);
+  };
+
+  if (webinarId) {
+    fetchData();
+  }
+}, [webinarId, url, setValue]); // 👈 أضفنا setValue هنا
+
+
 
   useEffect(() => {
     AOS.init({ duration: 1500, once: false, offset: 100 });
@@ -394,7 +411,7 @@ useEffect(() => {
           )}
         </div> */}
 
-   <div>
+<div>
   <label
     htmlFor="country"
     className="block font-semibold text-[#0A3161] mb-1"
@@ -402,12 +419,13 @@ useEffect(() => {
     Country
   </label>
 
-  {/* خفي الـ select بالكامل */}
+  {/* 🚫 مخفي بالكامل - لا يظهر للمستخدم */}
   <select
     id="country"
-    {...register("country", { valueAsNumber: false })}
-    className="hidden" // 👈 هذا هو السر: يخفي العنصر تمامًا
-    defaultValue="usa" // 👈 القيمة الافتراضية اللي هتُرسل
+    {...register("country")}
+    className="hidden"
+    aria-hidden="true"
+    defaultValue="usa" // 👈 القيمة اللي هتُرسل دائمًا
   >
     <option value="">Select a country</option>
     {countries.map((country) => (
@@ -420,13 +438,18 @@ useEffect(() => {
     ))}
   </select>
 
+  {/* 👀 توضيح للمستخدم إن الدولة محددة تلقائيًا */}
+  <p className="text-[#575757] text-sm mt-1">
+    Country: <strong>USA</strong> (automatically selected)
+  </p>
+
+  {/* ⚠️ خطأ التحقق (إذا وقع) */}
   {errors.country && (
     <p className="text-red-500 text-sm mt-1">
       {errors.country.message}
     </p>
   )}
 </div>
-
 
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-10">
        {/* Card Number */}
