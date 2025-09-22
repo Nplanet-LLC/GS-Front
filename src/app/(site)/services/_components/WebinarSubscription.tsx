@@ -319,76 +319,80 @@ function WebinarSubscription() {
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-8"
             data-aos="fade-left"
           >
-            {/* Service 1 */}
-            <div
-              className="bg-[#FBFBFB] shadow-2xl w-full rounded-md border border-[#2f77eb77]/44"
-              data-aos="zoom-in"
-            >
-              <div className="px-4 py-3 space-y-2 flex flex-col justify-between h-full">
-                <h2 className="text-[#0A3161] font-semibold text-2xl">
-                  Bidding Support for U.S. Government Projects
-                </h2>
-                <p className="text-[#575757] text-[16px] leading-relaxed">
-                  Our experts assist registered companies in preparing
-                  professional bid documents that meet U.S. government
-                  standards, ensuring technical acceptance.
-                </p>
-                <p className="text-[#0A3161] font-bold">
-                  <span className="text-[#B31942] text-xl font-semibold">
-                    1-3%
-                  </span>{" "}
-                  of the bid value, based on project size.
-                </p>
-                <p className="text-[#0A3161] font-bold flex items-center gap-1">
-                  <span className="text-[#B31942]">
-                    <Funnel strokeWidth={2.75} />
-                  </span>
-                  <span>
-                    Pricing and financial proposals are outside the scope of
-                    this service.
-                  </span>
-                </p>
-                <div className="flex gap-4 justify-center mt-7">
-                  <button
-                    onClick={handleBooking}
-                    className="w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent"
-                  >
-                    Book Consultation
-                  </button>
-                </div>
-              </div>
-            </div>
+{/* Service 1 */}
+<div
+  className="bg-[#FBFBFB] shadow-2xl w-full rounded-md border border-[#2f77eb77]/44"
+  data-aos="zoom-in"
+>
+  <div className="px-4 py-3 space-y-2 flex flex-col justify-between h-full">
+    <h2 className="text-[#0A3161] font-semibold text-2xl">
+      Bidding Support for U.S. Government Projects
+    </h2>
+    <p className="text-[#575757] text-[16px] leading-relaxed">
+      Our experts assist registered companies in preparing professional bid
+      documents that meet U.S. government standards, ensuring technical
+      acceptance.
+    </p>
+    <p className="text-[#0A3161] font-bold">
+      <span className="text-[#B31942] text-xl font-semibold">1-3%</span>{" "}
+      of the bid value, based on project size.
+    </p>
+    <p className="text-[#0A3161] font-bold flex items-center gap-1">
+      <span className="text-[#B31942]">
+        <Funnel strokeWidth={2.75} />
+      </span>
+      <span>
+        Pricing and financial proposals are outside the scope of this service.
+      </span>
+    </p>
+    <div className="flex gap-4 justify-center mt-7">
+      <a
+        href="https://outlook.office.com/bookwithme/user/a268e5a7348243d88e329582c49d1121%40glocalsolutions.us/meetingtype/M7GjmpeC5UeB6h3Mh66WBw2?anonymous&ismsaljsauthenabled"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-[200px]"
+      >
+        <button className="w-full h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
+          Book Consultation
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
 
-            {/* Service 2 */}
-            <div
-              className="bg-[#FBFBFB] shadow-2xl w-full rounded-md border border-[#2f77eb77]/44"
-              data-aos="zoom-in"
-            >
-              <div className="px-4 py-3 space-y-2 flex flex-col justify-between h-full">
-                <h2 className="text-[#0A3161] font-semibold text-2xl">
-                  Project Management Support
-                </h2>
-                <p className="text-[#575757] text-[16px] leading-relaxed">
-                  We provide consulting services for companies executing U.S.
-                  government projects, offering administrative expertise to
-                  ensure smooth implementation and timely financial settlements.
-                </p>
-                <p className="text-[#0A3161] font-bold">
-                  <span className="text-[#B31942] text-xl font-semibold">
-                    1-3%
-                  </span>{" "}
-                  of the bid value, based on project size.
-                </p>
-                <div className="flex gap-4 justify-center mt-7">
-                  <button
-                    onClick={handleBooking}
-                    className="w-[200px] h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent"
-                  >
-                    Book Consultation
-                  </button>
-                </div>
-              </div>
-            </div>
+{/* Service 2 */}
+<div
+  className="bg-[#FBFBFB] shadow-2xl w-full rounded-md border border-[#2f77eb77]/44"
+  data-aos="zoom-in"
+>
+  <div className="px-4 py-3 space-y-2 flex flex-col justify-between h-full">
+    <h2 className="text-[#0A3161] font-semibold text-2xl">
+      Project Management Support
+    </h2>
+    <p className="text-[#575757] text-[16px] leading-relaxed">
+      We provide consulting services for companies executing U.S. government
+      projects, offering administrative expertise to ensure smooth
+      implementation and timely financial settlements.
+    </p>
+    <p className="text-[#0A3161] font-bold">
+      <span className="text-[#B31942] text-xl font-semibold">1-3%</span>{" "}
+      of the bid value, based on project size.
+    </p>
+    <div className="flex gap-4 justify-center mt-7">
+      <a
+        href="https://outlook.office.com/bookwithme/user/a268e5a7348243d88e329582c49d1121%40glocalsolutions.us/meetingtype/M7GjmpeC5UeB6h3Mh66WBw2?anonymous&ismsaljsauthenabled"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-[200px]"
+      >
+        <button className="w-full h-[50px] rounded-md flex justify-center items-center cursor-pointer text-white transition-all duration-300 transform hover:scale-105 bg-[#B31942] border border-transparent">
+          Book Consultation
+        </button>
+      </a>
+    </div>
+  </div>
+</div>
+
           </div>
         </div>
       </div>

@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import axios from "axios";
 
 function OurServices() {
-  const [showIframe, setShowIframe] = useState(false);
+  // اللينك ثابت
+  const consultation =
+    "https://outlook.office.com/bookwithme/user/a268e5a7348243d88e329582c49d1121%40glocalsolutions.us/meetingtype/M7GjmpeC5UeB6h3Mh66WBw2?anonymous&ismsaljsauthenabled";
 
   useEffect(() => {
     AOS.init({
@@ -78,19 +79,6 @@ function OurServices() {
     },
   ];
 
-  const url = process.env.NEXT_PUBLIC_BASE_URL;
-  const [consultation, setConsultation] = useState<string | null>(null);
-  useEffect(() => {
-    const fetchConsultation = async () => {
-      const response = await axios.get(`${url}Consultation/get-all`);
-      setConsultation(response.data[0].link);
-    };
-    fetchConsultation();
-  }, []);
-
- 
-
-  // https://outlook.office.com/bookwithme/user/a268e5a7348243d88e329582c49d1121@glocalsolutions.us/meetingtype/M7GjmpeC5UeB6h3Mh66WBw2?anonymous&ep=mlink
   return (
     <div className="w-full bg-white pb-14 px-5 md:px-12 overflow-hidden">
       <span id="services" className="block h-[80px]"></span>
@@ -191,7 +179,7 @@ function OurServices() {
                 {item.des}
               </p>
               <button
-                onClick={() => setShowIframe(true)}
+                onClick={() => window.open(consultation, "_blank")}
                 className="bg-[#0A3161] text-sm group flex items-center m-auto cursor-pointer text-white px-6 py-2 shadow-md transition-transform duration-300 ease-in-out transform hover:scale-105"
               >
                 Book Consultation
@@ -200,26 +188,6 @@ function OurServices() {
           </div>
         ))}
       </div>
-
-      {/* الـ iframe Popup */}
-      {showIframe && (
-        <div className="fixed top-0 left-0 z-50 w-full h-full bg-black bg-opacity-70 flex justify-center items-center">
-          <div className="relative bg-white w-[90%] md:w-[80%] h-[90%] rounded-lg shadow-lg overflow-hidden">
-            <button
-              onClick={() => setShowIframe(false)}
-              className="absolute top-2 right-2 z-50 bg-red-600 text-white rounded-full p-2 hover:bg-red-700 transition"
-            >
-              <X />
-            </button>
-            <iframe
-              src={consultation || ""}
-              title="Book Consultation"
-              className="w-full h-full"
-              frameBorder="0"
-            ></iframe>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
